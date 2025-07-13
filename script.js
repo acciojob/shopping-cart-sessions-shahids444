@@ -1,3 +1,4 @@
+/* -------------------------------------------------- PRODUCTS */
 const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
@@ -6,52 +7,49 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
+/* -------------------------------------------------- HELPERS */
 const CART_KEY = "cart";
 
-function getCart() {
-  try {
-    return JSON.parse(sessionStorage.getItem(CART_KEY)) || [];
-  } catch {
-    return [];
-  }
-}
+const getCart  = () =>
+  JSON.parse(sessionStorage.getItem(CART_KEY) || "[]");
 
-function saveCart(cart) {
+const saveCart = (cart) =>
   sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
-}
 
+/* -------------------------------------------------- RENDER PRODUCTS */
 function renderProducts() {
-  const productListEl = document.getElementById("product-list");
-  productListEl.innerHTML = "";
+  const list = document.getElementById("product-list");
+  list.innerHTML = "";                         // reset
 
-  products.forEach((product) => {
+  products.forEach((p) => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <span>${product.name} - $${product.price}</span>
-      <button class="add-btn" data-id="${product.id}">Add to Cart</button>
+      <span>${p.name} - $${p.price}</span>
+      <button class="add-btn" data-id="${p.id}">Add to Cart</button>
     `;
-    productListEl.appendChild(li);
+    list.appendChild(li);
   });
 }
 
+/* -------------------------------------------------- RENDER CART */
 function renderCart() {
-  const cartListEl = document.getElementById("cart-list");
-  cartListEl.innerHTML = "";
+  const cartList = document.getElementById("cart-list");
+  cartList.innerHTML = "";                     // reset
 
-  const cart = getCart();
-  cart.forEach((item) => {
+  getCart().forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = `${item.name} - $${item.price}`;
-    cartListEl.appendChild(li);
+    li.textContent = `${item.name} - $${item.price}`;
+    cartList.appendChild(li);
   });
 }
 
+/* -------------------------------------------------- CART OPS */
 function addToCart(productId) {
-  const product = products.find(p => p.id === productId);
+  const product = products.find((p) => p.id === productId);
   if (!product) return;
 
   const cart = getCart();
-  cart.push(product); // Duplicates allowed
+  cart.push(product);                  // duplicates allowed
   saveCart(cart);
   renderCart();
 }
@@ -61,16 +59,16 @@ function clearCart() {
   renderCart();
 }
 
-// Event listeners
+/* -------------------------------------------------- EVENTS */
 document.getElementById("product-list").addEventListener("click", (e) => {
   if (e.target.classList.contains("add-btn")) {
-    const id = Number(e.target.dataset.id);
-    addToCart(id);
+    addToCart(Number(e.target.dataset.id));
   }
 });
 
-document.getElementById("clear-cart-btn").addEventListener("click", clearCart);
+document.getElementById("clear-cart-btn")
+        .addEventListener("click", clearCart);
 
-// Initial render
+/* -------------------------------------------------- INITIALISE */
 renderProducts();
-renderCart();
+renderCart();   // shows persisted cart if any
