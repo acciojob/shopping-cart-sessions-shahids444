@@ -7,7 +7,7 @@ const products = [
 ];
 
 const productTableBody = document.getElementById("product-table");
-const cartListEl = document.getElementById("cart-list");
+const cartListEl = document.getElementById("product-list");
 const clearBtn = document.getElementById("clear-cart-btn");
 
 const CART_KEY = "cart";
