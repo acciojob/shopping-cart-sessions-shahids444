@@ -1,4 +1,3 @@
-/* -------------------------------------------------- PRODUCTS */
 const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
@@ -7,49 +6,43 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-/* -------------------------------------------------- HELPERS */
 const CART_KEY = "cart";
 
-const getCart  = () =>
-  JSON.parse(sessionStorage.getItem(CART_KEY) || "[]");
+const getCart = () => JSON.parse(sessionStorage.getItem(CART_KEY) || "[]");
+const saveCart = (cart) => sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
 
-const saveCart = (cart) =>
-  sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
-
-/* -------------------------------------------------- RENDER PRODUCTS */
 function renderProducts() {
-  const list = document.getElementById("product-list");
-  list.innerHTML = "";                         // reset
+  const productList = document.getElementById("product-list");
+  productList.innerHTML = ""; // Clear previous content
 
-  products.forEach((p) => {
+  products.forEach((product) => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <span>${p.name} - $${p.price}</span>
-      <button class="add-btn" data-id="${p.id}">Add to Cart</button>
+      <span>${product.name} - $${product.price}</span>
+      <button class="add-btn" data-id="${product.id}">Add to Cart</button>
     `;
-    list.appendChild(li);
+    productList.appendChild(li);
   });
 }
 
-/* -------------------------------------------------- RENDER CART */
 function renderCart() {
   const cartList = document.getElementById("cart-list");
-  cartList.innerHTML = "";                     // reset
+  cartList.innerHTML = ""; // Clear previous content
 
-  getCart().forEach((item) => {
+  const cart = getCart();
+  cart.forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = `${item.name} - $${item.price}`;
+    li.textContent = `${item.name} - $${item.price}`;
     cartList.appendChild(li);
   });
 }
 
-/* -------------------------------------------------- CART OPS */
 function addToCart(productId) {
   const product = products.find((p) => p.id === productId);
   if (!product) return;
 
   const cart = getCart();
-  cart.push(product);                  // duplicates allowed
+  cart.push(product); // Allow duplicates
   saveCart(cart);
   renderCart();
 }
@@ -59,31 +52,13 @@ function clearCart() {
   renderCart();
 }
 
-/* -------------------------------------------------- EVENTS */
 document.getElementById("product-list").addEventListener("click", (e) => {
   if (e.target.classList.contains("add-btn")) {
     addToCart(Number(e.target.dataset.id));
   }
 });
 
-document.getElementById("clear-cart-btn")
-        .addEventListener("click", clearCart);
+document.getElementById("clear-cart-btn").addEventListener("click", clearCart);
 
-/* -------------------------------------------------- INITIALISE */
 renderProducts();
-// ------------------------------------------------------------
-// ONLY FOR CYPRESS TEST CASE COMPATIBILITY
-// Pre-fill cart with [Product 1, Product 5, Product 1] if empty
-(function setupTestCart() {
-  const existingCart = sessionStorage.getItem("cart");
-  if (!existingCart) {
-    const testCart = [
-      { id: 1, name: "Product 1", price: 10 },
-      { id: 5, name: "Product 5", price: 50 },
-      { id: 1, name: "Product 1", price: 10 },
-    ];
-    sessionStorage.setItem("cart", JSON.stringify(testCart));
-  }
-})();
-
-renderCart();   // shows persisted cart if any
+renderCart(); // shows persisted cart if any
