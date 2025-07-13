@@ -1,1 +1,29 @@
-/*  your css code here. If applicable */
+body {
+  font-family: Arial, sans-serif;
+  margin: 30px;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+button {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+button#clear-cart-btn {
+  margin-top: 10px;
+}

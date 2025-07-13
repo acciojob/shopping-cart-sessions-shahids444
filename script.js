@@ -6,12 +6,9 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-const productTableBody = document.getElementById("product-table");
-const cartListEl = document.getElementById("product-list");
-const clearBtn = document.getElementById("clear-cart-btn");
-
 const CART_KEY = "cart";
 
+// Get cart from sessionStorage
 function getCart() {
   try {
     return JSON.parse(sessionStorage.getItem(CART_KEY)) || [];
@@ -20,30 +17,33 @@ function getCart() {
   }
 }
 
+// Save cart to sessionStorage
 function saveCart(cart) {
   sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
 }
 
+// Render product list with "Add to Cart" buttons
 function renderProducts() {
-  // Remove loading row if it exists
-  const loadingRow = document.getElementById("loading");
-  if (loadingRow) {
-    loadingRow.remove();
-  }
+  const productListEl = document.getElementById("product-list");
+  productListEl.innerHTML = "";
 
   products.forEach((product) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${product.name}</td>
-      <td>$${product.price}</td>
-      <td><button class="add-btn" data-id="${product.id}">Add to Cart</button></td>
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <span>${product.name} - $${product.price}</span>
+      <button class="add-btn" data-id="${product.id}">Add to Cart</button>
     `;
-    productTableBody.appendChild(row);
+
+    productListEl.appendChild(li);
   });
 }
 
+// Render the shopping cart
 function renderCart() {
+  const cartListEl = document.getElementById("cart-list");
   cartListEl.innerHTML = "";
+
   const cart = getCart();
 
   cart.forEach((item) => {
@@ -53,6 +53,7 @@ function renderCart() {
   });
 }
 
+// Add a product to the cart
 function addToCart(productId) {
   const product = products.find((p) => p.id === productId);
   if (!product) return;
@@ -63,19 +64,22 @@ function addToCart(productId) {
   renderCart();
 }
 
+// Clear the cart
 function clearCart() {
   sessionStorage.removeItem(CART_KEY);
   renderCart();
 }
 
-productTableBody.addEventListener("click", (e) => {
+// Attach event listeners
+document.getElementById("product-list").addEventListener("click", (e) => {
   if (e.target.classList.contains("add-btn")) {
     const id = Number(e.target.dataset.id);
     addToCart(id);
   }
 });
 
-clearBtn.addEventListener("click", clearCart);
+document.getElementById("clear-cart-btn").addEventListener("click", clearCart);
 
+// Initial render
 renderProducts();
 renderCart();
