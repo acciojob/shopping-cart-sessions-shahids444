@@ -8,18 +8,15 @@ const products = [
 
 const CART_KEY = "cart";
 
-// Retrieve cart from sessionStorage or empty array
 const getCart = () => JSON.parse(sessionStorage.getItem(CART_KEY) || "[]");
 
-// Save cart to sessionStorage
 const saveCart = (cart) => sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
 
-// Render product list with Add buttons
 function renderProducts() {
   const productList = document.getElementById("product-list");
   productList.innerHTML = "";
 
-  products.forEach((product) => {
+  products.forEach(product => {
     const li = document.createElement("li");
     li.innerHTML = `
       <span>${product.name} - $${product.price}</span>
@@ -29,51 +26,43 @@ function renderProducts() {
   });
 }
 
-// Render cart items from sessionStorage
 function renderCart() {
   const cartList = document.getElementById("cart-list");
   cartList.innerHTML = "";
 
   const cart = getCart();
+  if (cart.length === 0) return; // leave cart empty (no li elements)
 
-  // No message, leave cart empty (0 children) if empty — this passes tests expecting empty ul
-  if (cart.length === 0) return;
-
-  cart.forEach((item) => {
+  cart.forEach(item => {
     const li = document.createElement("li");
     li.textContent = `${item.name} - $${item.price}`;
     cartList.appendChild(li);
   });
 }
 
-// Add product by id to cart and save
 function addToCart(productId) {
-  const product = products.find((p) => p.id === productId);
+  const product = products.find(p => p.id === productId);
   if (!product) return;
 
   const cart = getCart();
-  cart.push(product); // allow duplicates as per spec
+  cart.push(product);
   saveCart(cart);
   renderCart();
 }
 
-// Clear cart and update UI and storage
 function clearCart() {
   sessionStorage.removeItem(CART_KEY);
   renderCart();
 }
 
-// Listen for add to cart button clicks (event delegation)
-document.getElementById("product-list").addEventListener("click", (e) => {
+document.getElementById("product-list").addEventListener("click", e => {
   if (e.target.classList.contains("add-btn")) {
-    const productId = Number(e.target.dataset.id);
-    addToCart(productId);
+    addToCart(Number(e.target.dataset.id));
   }
 });
 
-// Listen for clear cart button click
 document.getElementById("clear-cart-btn").addEventListener("click", clearCart);
 
-// Initial render on page load
+// Initialize on page load
 renderProducts();
 renderCart();
