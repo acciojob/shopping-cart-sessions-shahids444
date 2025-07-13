@@ -1,4 +1,3 @@
-// -------- PRODUCT DATA --------
 const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
@@ -7,41 +6,42 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-// -------- DOM ELEMENTS --------
-const productListEl = document.getElementById("product-list");
+const productTableBody = document.getElementById("product-table");
 const cartListEl = document.getElementById("cart-list");
 const clearBtn = document.getElementById("clear-cart-btn");
 
 const CART_KEY = "cart";
 
-// Get cart array from sessionStorage or return empty array
 function getCart() {
   try {
     return JSON.parse(sessionStorage.getItem(CART_KEY)) || [];
-  } catch (e) {
+  } catch {
     return [];
   }
 }
 
-// Save cart array to sessionStorage
 function saveCart(cart) {
   sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
 }
 
-// -------- RENDER PRODUCTS --------
 function renderProducts() {
-  productListEl.innerHTML = "";
+  // Remove loading row if it exists
+  const loadingRow = document.getElementById("loading");
+  if (loadingRow) {
+    loadingRow.remove();
+  }
+
   products.forEach((product) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${product.name} - $${product.price}
-      <button class="add-btn" data-id="${product.id}">Add to Cart</button>
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${product.name}</td>
+      <td>$${product.price}</td>
+      <td><button class="add-btn" data-id="${product.id}">Add to Cart</button></td>
     `;
-    productListEl.appendChild(li);
+    productTableBody.appendChild(row);
   });
 }
 
-// -------- RENDER CART --------
 function renderCart() {
   cartListEl.innerHTML = "";
   const cart = getCart();
@@ -53,13 +53,12 @@ function renderCart() {
   });
 }
 
-// -------- CART OPERATIONS --------
 function addToCart(productId) {
   const product = products.find((p) => p.id === productId);
   if (!product) return;
 
   const cart = getCart();
-  cart.push(product); // add product (duplicates allowed)
+  cart.push(product);
   saveCart(cart);
   renderCart();
 }
@@ -69,8 +68,7 @@ function clearCart() {
   renderCart();
 }
 
-// -------- EVENT LISTENERS --------
-productListEl.addEventListener("click", (e) => {
+productTableBody.addEventListener("click", (e) => {
   if (e.target.classList.contains("add-btn")) {
     const id = Number(e.target.dataset.id);
     addToCart(id);
@@ -79,6 +77,5 @@ productListEl.addEventListener("click", (e) => {
 
 clearBtn.addEventListener("click", clearCart);
 
-// -------- INITIAL PAGE LOAD --------
 renderProducts();
 renderCart();
