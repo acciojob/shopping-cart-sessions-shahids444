@@ -8,16 +8,16 @@ const products = [
 
 const CART_KEY = "cart";
 
-// Retrieve the cart from sessionStorage or return empty array
+// Retrieve cart from sessionStorage or empty array
 const getCart = () => JSON.parse(sessionStorage.getItem(CART_KEY) || "[]");
 
-// Save the updated cart array back to sessionStorage
+// Save cart to sessionStorage
 const saveCart = (cart) => sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
 
-// Render the product list with "Add to Cart" buttons
+// Render product list with Add buttons
 function renderProducts() {
   const productList = document.getElementById("product-list");
-  productList.innerHTML = ""; // Clear previous content
+  productList.innerHTML = "";
 
   products.forEach((product) => {
     const li = document.createElement("li");
@@ -29,17 +29,15 @@ function renderProducts() {
   });
 }
 
-// Render the shopping cart items from sessionStorage
+// Render cart items from sessionStorage
 function renderCart() {
   const cartList = document.getElementById("cart-list");
-  cartList.innerHTML = ""; // Clear previous content
+  cartList.innerHTML = "";
 
   const cart = getCart();
 
-  // Remove "Your cart is empty." message to pass Cypress empty check
-  if (cart.length === 0) {
-    return; // do nothing, leave cart list empty
-  }
+  // No message, leave cart empty (0 children) if empty — this passes tests expecting empty ul
+  if (cart.length === 0) return;
 
   cart.forEach((item) => {
     const li = document.createElement("li");
@@ -48,24 +46,24 @@ function renderCart() {
   });
 }
 
-// Add a product to the cart and update sessionStorage & UI
+// Add product by id to cart and save
 function addToCart(productId) {
   const product = products.find((p) => p.id === productId);
   if (!product) return;
 
   const cart = getCart();
-  cart.push(product); // duplicates allowed as per requirements
+  cart.push(product); // allow duplicates as per spec
   saveCart(cart);
   renderCart();
 }
 
-// Clear the cart and update sessionStorage & UI
+// Clear cart and update UI and storage
 function clearCart() {
   sessionStorage.removeItem(CART_KEY);
   renderCart();
 }
 
-// Event listener for Add to Cart buttons using event delegation
+// Listen for add to cart button clicks (event delegation)
 document.getElementById("product-list").addEventListener("click", (e) => {
   if (e.target.classList.contains("add-btn")) {
     const productId = Number(e.target.dataset.id);
@@ -73,7 +71,7 @@ document.getElementById("product-list").addEventListener("click", (e) => {
   }
 });
 
-// Event listener for Clear Cart button
+// Listen for clear cart button click
 document.getElementById("clear-cart-btn").addEventListener("click", clearCart);
 
 // Initial render on page load
