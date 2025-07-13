@@ -12,10 +12,9 @@ const productListEl = document.getElementById("product-list");
 const cartListEl    = document.getElementById("cart-list");
 const clearBtn      = document.getElementById("clear-cart-btn");
 
-/* --------  SESSION‑STORAGE HELPERS  -------- */
+/* --------  SESSION-STORAGE HELPERS  -------- */
 const CART_KEY = "cart";
 
-/* Retrieve cart array from sessionStorage (or empty []) */
 function getCart() {
   try {
     return JSON.parse(sessionStorage.getItem(CART_KEY)) || [];
@@ -24,18 +23,18 @@ function getCart() {
   }
 }
 
-/* Save cart array back to sessionStorage */
 function saveCart(cart) {
   sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
 }
 
 /* --------  RENDER PRODUCTS  -------- */
 function renderProducts() {
-  productListEl.innerHTML = "";                         // reset
+  productListEl.innerHTML = ""; // reset
+
   products.forEach((p) => {
     const li = document.createElement("li");
     li.innerHTML = `
-      ${p.name} - $${p.price}
+      ${p.name} - $${p.price}
       <button class="add-btn" data-id="${p.id}">Add to Cart</button>
     `;
     productListEl.appendChild(li);
@@ -44,16 +43,16 @@ function renderProducts() {
 
 /* --------  RENDER CART  -------- */
 function renderCart() {
-  cartListEl.innerHTML = "";                            // reset
+  cartListEl.innerHTML = ""; // reset
   const cart = getCart();
+
   if (cart.length === 0) {
-    cartListEl.innerHTML = "<li>Your cart is empty.</li>";
-    return;
+    return; // 👈 do NOT render placeholder text — leave UL empty
   }
 
   cart.forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = `${item.name} - $${item.price}`;
+    li.textContent = `${item.name} - $${item.price}`;
     cartListEl.appendChild(li);
   });
 }
@@ -64,7 +63,7 @@ function addToCart(productId) {
   if (!product) return;
 
   const cart = getCart();
-  cart.push(product);           // duplicates allowed; adjust if needed
+  cart.push(product); // duplicates allowed
   saveCart(cart);
   renderCart();
 }
@@ -75,8 +74,6 @@ function clearCart() {
 }
 
 /* --------  EVENT LISTENERS  -------- */
-
-/* Add‑to‑cart (event delegation) */
 productListEl.addEventListener("click", (e) => {
   if (e.target.classList.contains("add-btn")) {
     const id = Number(e.target.dataset.id);
@@ -84,9 +81,8 @@ productListEl.addEventListener("click", (e) => {
   }
 });
 
-/* Clear cart button */
 clearBtn.addEventListener("click", clearCart);
 
 /* --------  INITIAL LOAD  -------- */
 renderProducts();
-renderCart();      // displays persisted cart, if any
+renderCart();
