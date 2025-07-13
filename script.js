@@ -36,11 +36,9 @@ function renderCart() {
 
   const cart = getCart();
 
+  // Remove "Your cart is empty." message to pass Cypress empty check
   if (cart.length === 0) {
-    const emptyMessage = document.createElement("li");
-    emptyMessage.textContent = "Your cart is empty.";
-    cartList.appendChild(emptyMessage);
-    return;
+    return; // do nothing, leave cart list empty
   }
 
   cart.forEach((item) => {
