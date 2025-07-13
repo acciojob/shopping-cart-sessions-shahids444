@@ -8,9 +8,14 @@ const products = [
 
 const CART_KEY = "cart";
 
-const getCart = () => JSON.parse(sessionStorage.getItem(CART_KEY) || "[]");
+function getCart() {
+  const cartJSON = sessionStorage.getItem(CART_KEY);
+  return cartJSON ? JSON.parse(cartJSON) : [];
+}
 
-const saveCart = (cart) => sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
+function saveCart(cart) {
+  sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
 
 function renderProducts() {
   const productList = document.getElementById("product-list");
@@ -31,7 +36,6 @@ function renderCart() {
   cartList.innerHTML = "";
 
   const cart = getCart();
-  if (cart.length === 0) return; // leave cart empty (no li elements)
 
   cart.forEach(item => {
     const li = document.createElement("li");
@@ -45,7 +49,7 @@ function addToCart(productId) {
   if (!product) return;
 
   const cart = getCart();
-  cart.push(product);
+  cart.push(product);  // Append the new product, don't overwrite
   saveCart(cart);
   renderCart();
 }
@@ -55,14 +59,16 @@ function clearCart() {
   renderCart();
 }
 
+// Attach event listeners
 document.getElementById("product-list").addEventListener("click", e => {
   if (e.target.classList.contains("add-btn")) {
-    addToCart(Number(e.target.dataset.id));
+    const id = Number(e.target.dataset.id);
+    addToCart(id);
   }
 });
 
 document.getElementById("clear-cart-btn").addEventListener("click", clearCart);
 
-// Initialize on page load
+// Initialize
 renderProducts();
 renderCart();
