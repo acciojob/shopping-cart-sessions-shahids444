@@ -46,10 +46,10 @@ function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  const cart = getCart();
-  cart.push(product);
-  saveCart(cart);
-  renderCart();
+  const cart = getCart(); // Get existing cart array
+  cart.push(product);     // Add new product
+  saveCart(cart);         // Save updated cart to sessionStorage
+  renderCart();           // Update cart UI
 }
 
 function clearCart() {
@@ -57,6 +57,7 @@ function clearCart() {
   renderCart();
 }
 
+// Event listeners
 document.getElementById("product-list").addEventListener("click", e => {
   if (e.target.classList.contains("add-btn")) {
     addToCart(Number(e.target.dataset.id));
@@ -65,6 +66,6 @@ document.getElementById("product-list").addEventListener("click", e => {
 
 document.getElementById("clear-cart-btn").addEventListener("click", clearCart);
 
-// On load:
+// Initialize on page load
 renderProducts();
 renderCart();
