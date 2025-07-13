@@ -9,8 +9,7 @@ const products = [
 const CART_KEY = "cart";
 
 function getCart() {
-  const cartJSON = sessionStorage.getItem(CART_KEY);
-  return cartJSON ? JSON.parse(cartJSON) : [];
+  return JSON.parse(sessionStorage.getItem(CART_KEY) || "[]");
 }
 
 function saveCart(cart) {
@@ -36,7 +35,6 @@ function renderCart() {
   cartList.innerHTML = "";
 
   const cart = getCart();
-
   cart.forEach(item => {
     const li = document.createElement("li");
     li.textContent = `${item.name} - $${item.price}`;
@@ -49,7 +47,7 @@ function addToCart(productId) {
   if (!product) return;
 
   const cart = getCart();
-  cart.push(product);  // Append the new product, don't overwrite
+  cart.push(product);
   saveCart(cart);
   renderCart();
 }
@@ -59,16 +57,14 @@ function clearCart() {
   renderCart();
 }
 
-// Attach event listeners
 document.getElementById("product-list").addEventListener("click", e => {
   if (e.target.classList.contains("add-btn")) {
-    const id = Number(e.target.dataset.id);
-    addToCart(id);
+    addToCart(Number(e.target.dataset.id));
   }
 });
 
 document.getElementById("clear-cart-btn").addEventListener("click", clearCart);
 
-// Initialize
+// On load:
 renderProducts();
 renderCart();
